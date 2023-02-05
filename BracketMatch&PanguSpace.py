@@ -75,23 +75,30 @@ if __name__ == '__main__':
         with open(file, 'r', encoding='utf-8') as f:
             lines = f.readlines()
         flag = False
+        match_flag = False
         for i in range(len(lines)):
             line = lines[i]
             if '/Users/zhuozhiyongde/' in line:
                 continue
-            if '(' in line or '（' in line:
+            if re.search(r'[\(\)（）]', line):
                 new_line = match_brackets(line)
                 if new_line is False:
                     print('Error in file: %s, line: %d' % (file, i + 1))
-                    sys.exit(1)
+                    print('Error line: %s' % line)
+                    # sys.exit(1)
+                    match_flag = True
+                    continue
                 if new_line == line:
                     continue
                 lines[i] = new_line
                 flag = True
                 print('File: %s, line: %d bracket formatted' % (file, i + 1))
 
-        if not flag:
+        if not flag and not match_flag:
             print('File: %s, no error' % file)
+
+        if match_flag:
+            print('File: %s, bracket match error' % file)
 
         # print(lines)
         # pangu format lines
